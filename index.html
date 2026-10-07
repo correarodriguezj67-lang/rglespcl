@@ -30,7 +30,10 @@
 <body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-rose-500 selection:text-white">
 
     <!-- REPRODUCTOR DE AUDIO (cancion.mp3) -->
-    <audio id="bgMusic" src="https://raw.githubusercontent.com/correarodriguezj67-lang/rglespcl/main/cancion.mp3.mp3" loop></audio>
+    <audio id="bgMusic" preload="auto">
+  <source src="cancion.mp3.mp3" type="audio/mpeg">
+  <source src="https://raw.githubusercontent.com/correarodriguezj67-lang/rglespcl/main/cancion.mp3.mp3" type="audio/mpeg">
+</audio>
 
     <!-- PANTALLA DE BIENVENIDA -->
     <div id="welcomeScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950">
@@ -104,60 +107,67 @@
 
     </main>
 
-    <!-- SCRIPT DE INTERACCIÓN -->
-    <script>
-        let isPlaying = false;
+<!-- SCRIPT DE INTERACCIÓN -->
+<script>
+    let isPlaying = false;
 
-        function startExperience() {
-            const audio = document.getElementById('bgMusic');
+    function startExperience() {
+        const audio = document.getElementById('bgMusic');
+        if (audio) {
             audio.play().then(() => {
                 isPlaying = true;
-            }).catch(e => console.log("Audio autostart:", e));
-
-            document.getElementById('welcomeScreen').classList.add('hidden');
-            document.getElementById('musicControls').classList.remove('hidden');
-            
-            const mainContent = document.getElementById('mainContent');
-            mainContent.classList.remove('hidden');
-            setTimeout(() => {
-                mainContent.classList.remove('opacity-0');
-            }, 50);
-
-            startHearts();
+            }).catch(e => console.log("Error al iniciar audio:", e));
         }
 
-        function toggleMusic() {
-            const audio = document.getElementById('bgMusic');
-            const icon = document.getElementById('musicIcon');
-            const text = document.getElementById('musicText');
+        document.getElementById('welcomeScreen').classList.add('hidden');
+        document.getElementById('musicControls').classList.remove('hidden');
 
+        const mainContent = document.getElementById('mainContent');
+        mainContent.classList.remove('hidden');
+        setTimeout(() => {
+            mainContent.classList.remove('opacity-0');
+        }, 50);
+
+        startHearts();
+    }
+
+    function toggleMusic() {
+        const audio = document.getElementById('bgMusic');
+        const icon = document.getElementById('musicIcon');
+        const text = document.getElementById('musicText');
+
+        if (audio) {
             if (isPlaying) {
                 audio.pause();
-                icon.classList.remove('animate-spin');
-                text.textContent = 'Música pausada';
+                if (icon) icon.classList.remove('animate-spin');
+                if (text) text.textContent = 'Música pausada';
+                isPlaying = false;
             } else {
-                audio.play();
-                icon.classList.add('animate-spin');
-                text.textContent = 'Donde nadie pueda ir 🎵';
+                audio.play().then(() => {
+                    if (icon) icon.classList.add('animate-spin');
+                    if (text) text.textContent = 'Donde nadie pueda ir ♫';
+                    isPlaying = true;
+                }).catch(e => console.log("Error al reproducir:", e));
             }
-            isPlaying = !isPlaying;
         }
+    }
 
-        function startHearts() {
-            setInterval(() => {
-                const heart = document.createElement('div');
-                heart.classList.add('heart-particle');
-                heart.innerHTML = '❤️';
-                heart.style.left = Math.random() * 100 + 'vw';
-                heart.style.animationDuration = Math.random() * 3 + 2 + 's';
-                heart.style.fontSize = Math.random() * 15 + 10 + 'px';
-                document.body.appendChild(heart);
+    function startHearts() {
+        setInterval(() => {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-particle');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            heart.style.fontSize = Math.random() * 15 + 10 + 'px';
+            document.body.appendChild(heart);
 
-                setTimeout(() => {
-                    heart.remove();
-                }, 5000);
-            }, 300);
-        }
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }, 300);
+    }
+</script> 
     </script>
 </body>
 </html> 
